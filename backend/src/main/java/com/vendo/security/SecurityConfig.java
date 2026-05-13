@@ -13,31 +13,18 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-
-                        // public endpoints
-                        .requestMatchers(
-                                "/api/auth/**"
-                        ).permitAll()
-
-                        // admin only
-                        .requestMatchers(
-                                "/api/products/**",
-                                "/api/categories/**"
-                        ).hasRole("ADMIN")
-
-                        // everything else authenticated
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .httpBasic(Customizer.withDefaults());
 
         return http.build();
-    }
+        }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
