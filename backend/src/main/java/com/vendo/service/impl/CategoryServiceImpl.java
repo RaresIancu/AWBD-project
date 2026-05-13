@@ -5,16 +5,18 @@ import com.vendo.exception.DuplicateResourceException;
 import com.vendo.exception.ResourceNotFoundException;
 import com.vendo.repository.CategoryRepository;
 import com.vendo.service.CategoryService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
+
+    public CategoryServiceImpl(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
+    }
 
     @Override
     public Category createCategory(Category category) {
@@ -23,6 +25,7 @@ public class CategoryServiceImpl implements CategoryService {
                     "Category with name '" + category.getName() + "' already exists"
             );
         }
+
         return categoryRepository.save(category);
     }
 

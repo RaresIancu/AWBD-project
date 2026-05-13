@@ -2,15 +2,9 @@ package com.vendo.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "categories")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Category {
 
     @Id
@@ -23,4 +17,37 @@ public class Category {
 
     @Column(length = 500)
     private String description;
+
+    public Category() {
+    }
+
+    public Category(Long id, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

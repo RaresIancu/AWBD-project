@@ -3,7 +3,6 @@ package com.vendo.controller;
 import com.vendo.entity.Category;
 import com.vendo.service.CategoryService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,10 +10,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/categories")
-@RequiredArgsConstructor
 public class CategoryController {
 
     private final CategoryService categoryService;
+
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -33,7 +35,8 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    public Category updateCategory(@PathVariable Long id, @Valid @RequestBody Category category) {
+    public Category updateCategory(@PathVariable Long id,
+                                   @Valid @RequestBody Category category) {
         return categoryService.updateCategory(id, category);
     }
 
