@@ -5,7 +5,8 @@ import {
 } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
-
+import ProtectedRoute from './components/ProtectedRoute'
+import OrdersPage from './pages/OrdersPage'
 import ProductsPage from "./pages/ProductsPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
@@ -33,6 +34,24 @@ function App() {
                 <Route
                     path="/register"
                     element={<RegisterPage />}
+                />
+
+                <Route
+                    path="/orders"
+                    element={
+                    <ProtectedRoute>
+                    <OrdersPage />
+                    </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/orders"
+                    element={
+                    <ProtectedRoute>
+                    <OrdersPage />
+                    </ProtectedRoute>
+                    }
                 />
 
             </Routes>

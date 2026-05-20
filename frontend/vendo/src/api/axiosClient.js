@@ -1,10 +1,22 @@
-import axios from "axios";
+import axios from 'axios'
 
 const axiosClient = axios.create({
-    baseURL: "http://localhost:8080/api",
-    headers: {
-        "Content-Type": "application/json"
-    }
-});
+  baseURL: 'http://localhost:8080/api',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
 
-export default axiosClient;
+axiosClient.interceptors.request.use(function (config) {
+  const savedUser = localStorage.getItem('authUser')
+
+  if (savedUser) {
+    const authUser = JSON.parse(savedUser)
+
+    config.headers.Authorization = authUser.authHeader
+  }
+
+  return config
+})
+
+export default axiosClient

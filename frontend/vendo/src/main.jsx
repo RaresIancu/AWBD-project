@@ -4,13 +4,17 @@ import App from './App.jsx'
 
 import { AuthProvider } from './context/AuthContext.jsx'
 
+import { CartProvider } from './context/CartContext.jsx'
+
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <AuthProvider>
-      <App />
+      <CartProvider>
+        <App />
+      </CartProvider>
     </AuthProvider>
   </React.StrictMode>,
 )
