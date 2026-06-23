@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.util.List;
 
 @RestController
@@ -26,9 +28,25 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<ProductResponseDto> getAllProducts() {
+public Object getProducts(
+        @RequestParam(required = false) Integer page,
+        @RequestParam(defaultValue = "6") int size,
+        @RequestParam(defaultValue = "id") String sortBy,
+        @RequestParam(defaultValue = "asc") String direction,
+        @RequestParam(required = false) String search
+) {
+    if (page == null) {
         return productService.getAllProducts();
     }
+
+    return productService.getProductsPaged(
+            page,
+            size,
+            sortBy,
+            direction,
+            search
+    );
+}
 
     @GetMapping("/{id}")
     public ProductResponseDto getProductById(@PathVariable Long id) {

@@ -5,11 +5,16 @@ import {
 } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
+import AddProductPage from './pages/AddProductPage'
+import AdminProductsPage from './pages/AdminProductsPage'
+import EditProductPage from './pages/EditProductPage'
 import ProtectedRoute from './components/ProtectedRoute'
+import AdminRoute from './components/AdminRoute'
 import OrdersPage from './pages/OrdersPage'
 import ProductsPage from "./pages/ProductsPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import CartPage from './pages/CartPage'
 
 function App() {
 
@@ -39,18 +44,54 @@ function App() {
                 <Route
                     path="/orders"
                     element={
-                    <ProtectedRoute>
-                    <OrdersPage />
-                    </ProtectedRoute>
+                        <ProtectedRoute>
+                            <OrdersPage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/admin/products/add"
+                    element={
+                        <AdminRoute>
+                            <AddProductPage />
+                        </AdminRoute>
+                    }
+                />
+
+                <Route
+                    path="/admin/products/edit/:id"
+                    element={
+                        <AdminRoute>
+                            <EditProductPage />
+                        </AdminRoute>
                     }
                 />
 
                 <Route
                     path="/orders"
                     element={
-                    <ProtectedRoute>
-                    <OrdersPage />
-                    </ProtectedRoute>
+                        <ProtectedRoute>
+                            <OrdersPage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/cart"
+                    element={
+                        <ProtectedRoute>
+                            <CartPage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/admin/products"
+                    element={
+                        <AdminRoute>
+                            <AdminProductsPage />
+                        </AdminRoute>
                     }
                 />
 

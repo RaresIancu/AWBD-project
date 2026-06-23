@@ -1,11 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import axiosClient from '../api/axiosClient'
 import { useAuth } from '../context/AuthContext'
 
 function LoginPage() {
-
   const navigate = useNavigate()
 
   const { login } = useAuth()
@@ -16,51 +14,26 @@ function LoginPage() {
   const [errorMessage, setErrorMessage] = useState('')
 
   function handleSubmit(event) {
-
     event.preventDefault()
 
     setErrorMessage('')
 
-    const authHeader =
-      'Basic ' + btoa(email + ':' + password)
-
-    axiosClient.get('/products', {
-      headers: {
-        Authorization: authHeader
-      }
-    })
-
+    login(email, password)
       .then(function () {
-
-        login(email, password)
-
         navigate('/')
       })
-
-    .catch(function (error) {
-    console.log(error)
-
-    if (error.response) {
-        console.log(error.response.status)
-        console.log(error.response.data)
-    }
-
-    setErrorMessage('Invalid email or password')
-    })
+      .catch(function (error) {
+        console.log(error)
+        setErrorMessage('Invalid email or password')
+      })
   }
 
   return (
-
     <div className="container mt-5">
-
       <div className="row justify-content-center">
-
         <div className="col-md-6 col-lg-5">
-
           <div className="card shadow-sm">
-
             <div className="card-body">
-
               <h2 className="card-title text-center mb-4">
                 Login
               </h2>
@@ -72,9 +45,7 @@ function LoginPage() {
               )}
 
               <form onSubmit={handleSubmit}>
-
                 <div className="mb-3">
-
                   <label className="form-label">
                     Email
                   </label>
@@ -88,11 +59,9 @@ function LoginPage() {
                     }}
                     required
                   />
-
                 </div>
 
                 <div className="mb-3">
-
                   <label className="form-label">
                     Password
                   </label>
@@ -106,7 +75,6 @@ function LoginPage() {
                     }}
                     required
                   />
-
                 </div>
 
                 <button
@@ -115,17 +83,11 @@ function LoginPage() {
                 >
                   Login
                 </button>
-
               </form>
-
             </div>
-
           </div>
-
         </div>
-
       </div>
-
     </div>
   )
 }

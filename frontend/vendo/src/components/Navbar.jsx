@@ -3,8 +3,7 @@ import { useAuth } from '../context/AuthContext'
 
 function Navbar() {
   const navigate = useNavigate()
-  const { authUser, logout } = useAuth()
-
+  const { authUser, logout, isAdmin } = useAuth()
   function handleLogout() {
     logout()
     navigate('/login')
@@ -21,6 +20,24 @@ function Navbar() {
           <Link className="nav-link" to="/">
             Products
           </Link>
+
+          {authUser && (
+            <>
+              <Link className="nav-link" to="/cart">
+                Cart
+              </Link>
+
+              <Link className="nav-link" to="/orders">
+                Orders
+              </Link>
+
+              {isAdmin() && (
+                <Link className="nav-link" to="/admin/products">
+                  Admin
+                </Link>
+              )}
+            </>
+          )}
         </div>
 
         <div className="navbar-nav ms-auto">
