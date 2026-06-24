@@ -1,6 +1,6 @@
 # Vendo - E-commerce Web Application
 
-Vendo este o aplicație web de tip e-commerce dezvoltată pentru proiect universitar. Aplicația permite vizualizarea produselor, autentificarea utilizatorilor, administrarea produselor, adăugarea produselor în coș, plasarea comenzilor și adăugarea de review-uri pentru produse.
+Vendo este o aplicație web de tip e-commerce dezvoltată pentru proiect universitar. Aplicația permite utilizatorilor să vizualizeze produse, să se autentifice, să adauge produse în coș, să plaseze comenzi și să adauge review-uri. Administratorii pot gestiona produsele și categoriile.
 
 ## Tehnologii folosite
 
@@ -26,23 +26,24 @@ Vendo este o aplicație web de tip e-commerce dezvoltată pentru proiect univers
 
 ## Funcționalități implementate
 
-* Register
-* Login cu Basic Authentication
+* Înregistrare utilizator
+* Autentificare cu Basic Authentication
 * Roluri: `ROLE_USER`, `ROLE_ADMIN`
 * Rutare protejată în frontend
 * Navbar dinamic în funcție de autentificare
 * CRUD produse
 * CRUD categorii
-* Administrare produse pentru admin
+* Administrare produse pentru utilizatorii admin
 * Coș de cumpărături
 * Checkout
 * Comenzi
 * Review-uri pentru produse
-* Rating 1-5
+* Rating 1-5 pentru produse
 * Comentarii pentru produse
-* Pagination pentru produse
+* Pagination pentru lista de produse
 * Sorting după id, nume, preț și stoc
 * Search produse după nume
+* Protejarea endpoint-urilor de admin în backend
 
 ## Structura proiectului
 
@@ -54,7 +55,9 @@ AWBD-project/
 │   │   ├── controller/
 │   │   ├── dto/
 │   │   ├── entity/
+│   │   ├── exception/
 │   │   ├── repository/
+│   │   ├── security/
 │   │   ├── service/
 │   │   └── service/impl/
 │   │
@@ -65,12 +68,36 @@ AWBD-project/
 └── frontend/
     └── vendo/
         └── src/
+            ├── api/
             ├── components/
             ├── context/
             ├── pages/
-            ├── api/
             └── utils/
 ```
+
+## Entități principale
+
+Aplicația folosește următoarele entități:
+
+* `User`
+* `Role`
+* `UserProfile`
+* `Product`
+* `Category`
+* `Order`
+* `OrderItem`
+* `Review`
+
+## Relații între entități
+
+* `Product` ↔ `Category`: Many-to-Many
+* `User` ↔ `Role`: Many-to-Many
+* `User` ↔ `UserProfile`: One-to-One
+* `User` ↔ `Order`: One-to-Many
+* `Order` ↔ `OrderItem`: One-to-Many
+* `Product` ↔ `OrderItem`: Many-to-One
+* `Product` ↔ `Review`: One-to-Many
+* `User` ↔ `Review`: One-to-Many
 
 ## Configurare bază de date
 
@@ -82,7 +109,7 @@ Trebuie să existe o bază de date cu numele:
 vendo_db
 ```
 
-Configurarea pentru profilul `dev` se află în:
+Configurația pentru profilul `dev` se află în:
 
 ```text
 backend/src/main/resources/application-dev.yml
@@ -114,7 +141,7 @@ server:
   port: 8080
 ```
 
-Aplicația folosește profilul activ:
+Profilul activ folosit pentru dezvoltare este:
 
 ```text
 dev
@@ -144,7 +171,7 @@ WHERE NOT EXISTS (
 );
 ```
 
-Acest script poate rula la fiecare pornire a aplicației fără să dubleze rolurile.
+Scriptul poate rula la fiecare pornire fără să dubleze rolurile existente.
 
 ## Rulare backend
 
@@ -155,13 +182,13 @@ cd backend
 mvn spring-boot:run
 ```
 
-Backend-ul va porni pe:
+Backend-ul pornește pe:
 
 ```text
 http://localhost:8080
 ```
 
-Exemplu endpoint produse:
+Exemplu endpoint:
 
 ```text
 http://localhost:8080/api/products
@@ -177,7 +204,7 @@ npm install
 npm run dev
 ```
 
-Frontend-ul va porni pe:
+Frontend-ul pornește pe:
 
 ```text
 http://localhost:5173
@@ -231,9 +258,7 @@ GET /api/products/{productId}/reviews
 POST /api/products/{productId}/reviews
 ```
 
-Pentru adăugarea unui review, utilizatorul trebuie să fie autentificat.
-
-Exemplu request:
+Exemplu body pentru adăugarea unui review:
 
 ```json
 {
@@ -242,8 +267,89 @@ Exemplu request:
 }
 ```
 
-## Observații
+## Securitate
 
-Aplicația este rulată local, fără Docker, deoarece mediul de lucru nu permite utilizarea Docker Desktop. PostgreSQL rulează local, iar backend-ul și frontend-ul sunt pornite separat din terminal.
+Aplicația folosește Spring Security și Basic Authentication.
 
-Pentru dezvoltare locală, această variantă este suficientă și stabilă.
+Reguli principale:
+
+* `GET /api/products/**` este public
+* `GET /api/categories/**` este public
+* `POST /api/products/**` este permis doar pentru `ROLE_ADMIN`
+* `PUT /api/products/**` este permis doar pentru `ROLE_ADMIN`
+* `DELETE /api/products/**` este permis doar pentru `ROLE_ADMIN`
+* `POST /api/categories/**` este permis doar pentru `ROLE_ADMIN`
+* `PUT /api/categories/**` este permis doar pentru `ROLE_ADMIN`
+* `DELETE /api/categories/**` este permis doar pentru `ROLE_ADMIN`
+* `POST /api/products/{id}/reviews` este permis pentru utilizatori autentificați
+* `GET /api/products/{id}/reviews` este public
+* `GET /api/orders/**` și `POST /api/orders/**` necesită autentificare
+
+Frontend-ul folosește rute protejate pentru paginile care necesită autentificare și rute separate pentru zona de administrare.
+
+## Pagini frontend
+
+Aplicația conține următoarele pagini principale:
+
+* `LoginPage`
+* `RegisterPage`
+* `ProductsPage`
+* `CartPage`
+* `OrdersPage`
+* `AdminProductsPage`
+* `AddProductPage`
+* `EditProductPage`
+
+Componente importante:
+
+* `Navbar`
+* `ProtectedRoute`
+* `AdminRoute`
+* `ProductReviews`
+
+Context API:
+
+* `AuthContext`
+* `CartContext`
+
+## Flux utilizator
+
+Un utilizator normal poate:
+
+1. să se înregistreze;
+2. să se autentifice;
+3. să vadă lista de produse;
+4. să caute și să sorteze produse;
+5. să adauge produse în coș;
+6. să finalizeze checkout-ul;
+7. să vadă comenzile;
+8. să adauge review-uri la produse.
+
+## Flux administrator
+
+Un administrator poate:
+
+1. să se autentifice;
+2. să acceseze pagina de administrare produse;
+3. să adauge produse;
+4. să editeze produse;
+5. să șteargă produse;
+6. să gestioneze categoriile, dacă endpoint-urile sunt folosite din interfață sau din API.
+
+## Observații despre Docker
+
+Aplicația este rulată local fără Docker, deoarece mediul de lucru nu permite utilizarea Docker Desktop. PostgreSQL rulează local, iar backend-ul și frontend-ul sunt pornite separat din terminal.
+
+Pentru dezvoltare și prezentare locală, această variantă este suficientă și stabilă.
+
+## Dezvoltări viitoare
+
+Funcționalități care pot fi adăugate ulterior:
+
+* integrare plată online;
+* wishlist;
+* filtre avansate pe categorii și preț;
+* upload imagini pentru produse;
+* dashboard admin cu statistici;
+* deployment folosind Docker/Kubernetes într-un mediu unde acestea sunt permise;
+* testare automată backend și frontend.
