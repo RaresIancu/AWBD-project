@@ -3,13 +3,15 @@ package com.vendo.controller;
 import com.vendo.dto.ReviewRequestDto;
 import com.vendo.dto.ReviewResponseDto;
 import com.vendo.service.ReviewService;
-import org.springframework.security.core.Authentication;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/products/{productId}/reviews")
+@CrossOrigin(origins = "http://localhost:5173")
 public class ReviewController {
 
     private final ReviewService reviewService;
@@ -19,22 +21,24 @@ public class ReviewController {
     }
 
     @PostMapping
-    public ReviewResponseDto createReview(
+    public ResponseEntity<ReviewResponseDto> createReview(
             @PathVariable Long productId,
-            @RequestBody ReviewRequestDto request,
-            Authentication authentication
-    ) {
-        return reviewService.createReview(
+            @RequestBody ReviewRequestDto reviewRequestDto,
+            Principal principal) {
+
+        ReviewResponseDto createdReview = reviewService.createReview(
                 productId,
-                request,
-                authentication.getName()
-        );
+                reviewRequestDto,
+                principal.getName());
+
+        return ResponseEntity.status(201).body(createdReview);
     }
 
     @GetMapping
-    public List<ReviewResponseDto> getReviewsForProduct(
-            @PathVariable Long productId
-    ) {
-        return reviewService.getReviewsForProduct(productId);
+    public ResponseEntity<List<ReviewResponseDto>> getReviewsByProduct(
+            @PathVariable Long productId) {
+        List<ReviewResponseDto> reviews = reviewService.getReviewsByProduct(productId);
+
+        return ResponseEntity.ok(reviews);
     }
 }

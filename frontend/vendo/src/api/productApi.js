@@ -7,14 +7,19 @@ export const getProducts = async function (
     sortBy,
     direction
 ) {
+    const params = {
+        page: page,
+        size: size,
+        sortBy: sortBy,
+        direction: direction,
+    }
+
+    if (search && search.trim() !== '') {
+        params.search = search
+    }
+
     const response = await axiosClient.get('/products', {
-        params: {
-            page: page,
-            size: size,
-            search: search,
-            sortBy: sortBy,
-            direction: direction,
-        },
+        params: params,
     })
 
     return response.data

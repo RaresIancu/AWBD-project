@@ -26,6 +26,10 @@ public class SecurityConfig {
                                                 .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
                                                 .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
 
+                                                .requestMatchers(HttpMethod.GET, "/api/products/*/reviews").permitAll()
+                                                .requestMatchers(HttpMethod.POST, "/api/products/*/reviews")
+                                                .authenticated()
+
                                                 .requestMatchers(HttpMethod.POST, "/api/products/**").hasRole("ADMIN")
                                                 .requestMatchers(HttpMethod.PUT, "/api/products/**").hasRole("ADMIN")
                                                 .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasRole("ADMIN")
@@ -36,9 +40,6 @@ public class SecurityConfig {
                                                 .hasRole("ADMIN")
 
                                                 .requestMatchers("/api/orders/**").authenticated()
-                                                .requestMatchers(HttpMethod.POST, "/api/products/*/reviews")
-                                                .authenticated()
-                                                .requestMatchers(HttpMethod.GET, "/api/products/*/reviews").permitAll()
 
                                                 .anyRequest().authenticated())
                                 .httpBasic(Customizer.withDefaults());

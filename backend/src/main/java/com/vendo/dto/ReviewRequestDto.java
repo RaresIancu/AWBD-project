@@ -17,12 +17,12 @@ public class ReviewRequestDto {
         return rating;
     }
 
-    public String getComment() {
-        return comment;
-    }
-
     public void setRating(Integer rating) {
         this.rating = rating;
+    }
+
+    public String getComment() {
+        return comment;
     }
 
     public void setComment(String comment) {

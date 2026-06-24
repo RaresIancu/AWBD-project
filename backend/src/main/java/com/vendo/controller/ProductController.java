@@ -1,15 +1,12 @@
 package com.vendo.controller;
 
 import com.vendo.dto.ProductRequestDto;
+import org.springframework.data.domain.Page;
 import com.vendo.dto.ProductResponseDto;
 import com.vendo.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
@@ -28,25 +25,20 @@ public class ProductController {
     }
 
     @GetMapping
-public Object getProducts(
-        @RequestParam(required = false) Integer page,
-        @RequestParam(defaultValue = "6") int size,
-        @RequestParam(defaultValue = "id") String sortBy,
-        @RequestParam(defaultValue = "asc") String direction,
-        @RequestParam(required = false) String search
-) {
-    if (page == null) {
-        return productService.getAllProducts();
-    }
+    public Page<ProductResponseDto> getProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction,
+            @RequestParam(required = false) String search) {
 
-    return productService.getProductsPaged(
-            page,
-            size,
-            sortBy,
-            direction,
-            search
-    );
-}
+        return productService.getProductsPaged(
+                page,
+                size,
+                sortBy,
+                direction,
+                search);
+    }
 
     @GetMapping("/{id}")
     public ProductResponseDto getProductById(@PathVariable Long id) {
@@ -55,7 +47,7 @@ public Object getProducts(
 
     @PutMapping("/{id}")
     public ProductResponseDto updateProduct(@PathVariable Long id,
-                                            @Valid @RequestBody ProductRequestDto productRequestDto) {
+            @Valid @RequestBody ProductRequestDto productRequestDto) {
         return productService.updateProduct(id, productRequestDto);
     }
 

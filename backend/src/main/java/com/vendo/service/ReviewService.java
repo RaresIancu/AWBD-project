@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ReviewService {
 
-    ReviewResponseDto createReview(Long productId, ReviewRequestDto request, String email);
+    ReviewResponseDto createReview(Long productId, ReviewRequestDto reviewRequestDto, String username);
 
-    List<ReviewResponseDto> getReviewsForProduct(Long productId);
+    List<ReviewResponseDto> getReviewsByProduct(Long productId);
 }
