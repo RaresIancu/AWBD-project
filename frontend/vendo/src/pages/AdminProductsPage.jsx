@@ -12,10 +12,11 @@ function AdminProductsPage() {
     function loadProducts() {
         axiosClient.get('/products')
             .then(function (response) {
-                setProducts(response.data)
-            })
-            .catch(function (error) {
-                console.log(error)
+                if (response.data.content) {
+                    setProducts(response.data.content)
+                } else {
+                    setProducts(response.data)
+                }
             })
     }
 

@@ -13,6 +13,7 @@ import com.vendo.repository.ProductRepository;
 import com.vendo.repository.UserRepository;
 import com.vendo.service.OrderService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -30,13 +31,13 @@ public class OrderServiceImpl implements OrderService {
     public OrderServiceImpl(
             OrderRepository orderRepository,
             ProductRepository productRepository,
-            UserRepository userRepository
-    ) {
+            UserRepository userRepository) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.userRepository = userRepository;
     }
 
+    @Transactional
     @Override
     public OrderResponseDto createOrder(OrderRequestDto request, String email) {
         Optional<User> userOptional = userRepository.findByEmail(email);
@@ -63,6 +64,17 @@ public class OrderServiceImpl implements OrderService {
             }
 
             Product product = productOptional.get();
+
+            if (itemRequest.getQuantity() <= 0) {
+                throw new RuntimeException("Quantity must be greater than 0");
+            }
+
+            if (product.getStock() < itemRequest.getQuantity()) {
+                throw new RuntimeException("Not enough stock for product: " + product.getName());
+            }
+
+            product.setStock(product.getStock() - itemRequest.getQuantity());
+            productRepository.save(product);
 
             OrderItem orderItem = new OrderItem();
             orderItem.setProduct(product);
@@ -111,8 +123,7 @@ public class OrderServiceImpl implements OrderService {
                     item.getProduct().getId(),
                     item.getProduct().getName(),
                     item.getQuantity(),
-                    item.getPrice()
-            );
+                    item.getPrice());
 
             itemResponses.add(itemResponse);
         }
@@ -122,7 +133,6 @@ public class OrderServiceImpl implements OrderService {
                 order.getCreatedAt(),
                 order.getTotalPrice(),
                 order.getStatus(),
-                itemResponses
-        );
+                itemResponses);
     }
 }
